@@ -33,7 +33,7 @@ stages:
           - task: SSH@0
             displayName: "Sync Code - Staging"
             inputs:
-              sshEndpoint: 'ssh-odoo17'
+              sshEndpoint: 'ssh-odoo17-staging'
               runOptions: commands
               commands: |
                 set -e
@@ -78,7 +78,7 @@ stages:
           - task: SSH@0
             displayName: "Sync Code - Production"
             inputs:
-              sshEndpoint: 'ssh-odoo17-production'
+              sshEndpoint: 'ssh-odoo17-prod'
               runOptions: commands
               commands: |
                 set -e
@@ -97,7 +97,7 @@ stages:
           - task: SSH@0
             displayName: "Uncompress odoo.sql.gz on VM"
             inputs:
-              sshEndpoint: 'ssh-odoo17-production'
+              sshEndpoint: 'ssh-odoo17-prod'
               runOptions: commands
               commands: |
                 set -e
@@ -110,24 +110,24 @@ stages:
           - task: SSH@0
             displayName: "Restore Database"
             inputs:
-              sshEndpoint: 'ssh-odoo17-production'
+              sshEndpoint: 'ssh-odoo17-prod'
               runOptions: commands
               commands: |
                 set -e
-                echo "$(STAGINGUSERPASSWORD)" | sudo -S -p '' cp /home/azureuser/deploy-temp/restore_db.sh /tmp/
-                echo "$(STAGINGUSERPASSWORD)" | sudo -S -p '' cp /home/azureuser/deploy-temp/odoo.sql /tmp/
+                echo "$(PRODUSERPASSWORD)" | sudo -S -p '' cp /home/azureuser/deploy-temp/restore_db.sh /tmp/
+                echo "$(PRODUSERPASSWORD)" | sudo -S -p '' cp /home/azureuser/deploy-temp/odoo.sql /tmp/
 
-                echo "$(STAGINGUSERPASSWORD)" | sudo -S -p '' chmod +x /tmp/restore_db.sh
-                echo "$(STAGINGUSERPASSWORD)" | sudo -S -p '' chmod 644 /tmp/odoo.sql
+                echo "$(PRODUSERPASSWORD)" | sudo -S -p '' chmod +x /tmp/restore_db.sh
+                echo "$(PRODUSERPASSWORD)" | sudo -S -p '' chmod 644 /tmp/odoo.sql
 
-                echo "$(STAGINGUSERPASSWORD)" | sudo -S -p '' -u postgres /tmp/restore_db.sh "odoo17" "odoo" "/tmp/odoo.sql"
+                echo "$(PRODUSERPASSWORD)" | sudo -S -p '' -u postgres /tmp/restore_db.sh "odoo17" "odoo" "/tmp/odoo.sql"
 
           # Run update script
           - task: SSH@0
             displayName: "Run Update Script - Production"
             inputs:
-              sshEndpoint: 'ssh-odoo17-production'
+              sshEndpoint: 'ssh-odoo17-prod'
               runOptions: commands
               commands: |
-                echo "$(STAGINGUSERPASSWORD)" | sudo -S -p '' chmod +x $(updateScript)
-                echo "$(STAGINGUSERPASSWORD)" | sudo -S -p '' $(updateScript)
+                echo "$(PRODUSERPASSWORD)" | sudo -S -p '' chmod +x $(updateScript)
+                echo "$(PRODUSERPASSWORD)" | sudo -S -p '' $(updateScript)
