@@ -11,6 +11,7 @@ variables:
   repoUrl: 'https://github.com/Xinghua30/e08g06t01-odoo17'
   updateScript: '/home/azureuser/deploy-temp/update_code.sh'
   stagePath: '/home/azureuser/'
+  tempDeploy: '/home/azureuser/deploy-temp'
 
 stages:
 
